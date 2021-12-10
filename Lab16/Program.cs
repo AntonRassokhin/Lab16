@@ -16,8 +16,8 @@ namespace Lab16
         static void Main(string[] args)
         {
             
-            string[] expArray = new string[3];
-
+            /*
+            ExpTovar[] expArray = new ExpTovar[3];            
             for (int i = 0; i < 3; i++)
             {
                 Console.WriteLine("Введите последовательно: код товара, название товара, цену товара:");
@@ -27,27 +27,43 @@ namespace Lab16
                     nameTovar = Console.ReadLine(),
                     cenaTovar = Convert.ToUInt32(Console.ReadLine()),
                 };
-                JsonSerializerOptions options = new JsonSerializerOptions()
-                {
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-                    WriteIndented = true
-                };
-                string expJsonString = JsonSerializer.Serialize(exportTovar, options);
-                expArray[i] = expJsonString;
-                using (StreamWriter recordFile = new StreamWriter("TEST.json", true))
-                {
-                    recordFile.WriteLine(expArray[i]);
-                }
+                expArray[i] = exportTovar;                
             }
-            
+
+            JsonSerializerOptions options = new JsonSerializerOptions()
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true
+            };
+            string expJsonString = JsonSerializer.Serialize(expArray, options);
+
+            using (StreamWriter recordFile = new StreamWriter("TEST.json", true))
+            {
+                recordFile.WriteLine(expJsonString);
+            }
+            */
 
             // вторая часть
             string impJsonString = File.ReadAllText("TEST.json");
-            var impTovar = JsonSerializer.Deserialize<List<ImpTovar>>(impJsonString);
-            var maxPrice = impTovar.Max(x => x.cenaTovar);
-            var maxName = impTovar.Last(x => x.cenaTovar == maxPrice).nameTovar;
-            Console.WriteLine("Самый дорогой товар - {0}", maxName);
+            Console.WriteLine(impJsonString);
+
+            ExpTovar[] impTovar = JsonSerializer.Deserialize<ExpTovar[]>(impJsonString);
+
+            
+            uint maxCena = impTovar[0].cenaTovar;
+            string maxName = impTovar[0].nameTovar;
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (impTovar[i].cenaTovar > maxCena)
+                {
+                    maxCena = impTovar[i].cenaTovar;
+                    maxName = impTovar[i].nameTovar;
+                }
+            }
+            Console.WriteLine("Товар {0} - самый дорогой", maxName);
             Console.ReadKey();
+            
         }
     }
 
@@ -57,16 +73,5 @@ namespace Lab16
         public string nameTovar { get; set; }
         public uint cenaTovar { get; set; }
     }
-
-    class ImpTovar
-    {
-        public int codeTovar { get; set; }
-        public string nameTovar { get; set; }
-        public uint cenaTovar { get; set; }
-
-        /*public void SayCena()
-        {
-            Console.WriteLine(cenaTovar);
-        }*/
-    }
+       
 }
